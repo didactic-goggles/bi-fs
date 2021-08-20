@@ -5,6 +5,6 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .get(postsController.getPosts)
-  .post(postsController.createPost);
+  .post(postsController.uploadPostImage, postsController.createPost);
 
 module.exports = router;

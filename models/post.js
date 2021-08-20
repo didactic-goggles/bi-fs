@@ -19,6 +19,9 @@ const PostSchema = new mongoose.Schema({
       enum: ['Quote', 'Fashion', 'Food', 'Gaming', 'Video'],
     },
   ],
+  created: {
+    type: Date,
+  },
 });
 
 PostSchema.pre('save', function (next) {
