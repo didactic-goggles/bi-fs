@@ -23,7 +23,7 @@ const ErrorToast = (props) => (
 const showError = (content) => toast.error(<ErrorToast content={content} />, { hideProgressBar: true })
 
 const API = axios.create({
-    baseURL: '/'
+    baseURL: '/api/'
 })
 
 API.interceptors.response.use(
