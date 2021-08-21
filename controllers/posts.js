@@ -26,10 +26,14 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
   },
-  filename: function (req, file, cb) {
+  filename: async function (req, file, cb) {
     if (file.mimetype.startsWith('image')) {
       const filename = `post-${Date.now()}-${file.originalname}`;
+      const filenameSmall = `rs-post-${Date.now()}-${file.originalname}`;
       cb(null, filename);
+      await sharp(req.file.buffer)
+        .resize(450, 300)
+        .toFile(`public/uploads/${filenameSmall}`);
       req.body.image = filename;
     } else {
       cb(new AppError('Please upload image or document.', 400), false);
