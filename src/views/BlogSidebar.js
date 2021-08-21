@@ -26,30 +26,30 @@ const BlogSidebar = () => {
     Food: 'light-success'
   }
 
-  const renderRecentPosts = () => {
-    return data.recentPosts.map((post, index) => {
-      return (
-        <Media
-          key={index}
-          className={classnames({
-            'mb-2': index !== data.recentPosts.length - 1
-          })}
-        >
-          <Link className='mr-2' to={`/pages/blog/detail/${post.id}`}>
-            <img className='rounded' src={post.img} alt={post.title} width='100' height='70' />
-          </Link>
-          <Media body>
-            <h6 className='blog-recent-post-title'>
-              <Link className='text-body-heading' to={`/pages/blog/detail/${post.id}`}>
-                {post.title}
-              </Link>
-            </h6>
-            <div className='text-muted mb-0'>{post.createdTime}</div>
-          </Media>
-        </Media>
-      )
-    })
-  }
+  // const renderRecentPosts = () => {
+  //   return data.recentPosts.map((post, index) => {
+  //     return (
+  //       <Media
+  //         key={index}
+  //         className={classnames({
+  //           'mb-2': index !== data.recentPosts.length - 1
+  //         })}
+  //       >
+  //         <Link className='mr-2' to={`/pages/blog/detail/${post.id}`}>
+  //           <img className='rounded' src={post.img} alt={post.title} width='100' height='70' />
+  //         </Link>
+  //         <Media body>
+  //           <h6 className='blog-recent-post-title'>
+  //             <Link className='text-body-heading' to={`/pages/blog/detail/${post.id}`}>
+  //               {post.title}
+  //             </Link>
+  //           </h6>
+  //           <div className='text-muted mb-0'>{post.createdTime}</div>
+  //         </Media>
+  //       </Media>
+  //     )
+  //   })
+  // }
 
   const renderCategories = () => {
     return categories.map((item, index) => {
