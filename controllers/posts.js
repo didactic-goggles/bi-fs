@@ -40,19 +40,23 @@ const upload = multer({
 
 exports.resizePostImage = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
-  const { file } = req;
-  if (file.size > 1000000)
-    return next(new AppError('Please upload an image less than 1mb'));
-  const filename = `post-${Date.now()}-${file.originalname}`;
-  const filenameSmall = `rs-post-${Date.now()}-${file.originalname}`;
-  await sharp(req.file.buffer)
-    .resize(900, 600)
-    .toFile(`public/uploads/${filename}`);
-  await sharp(req.file.buffer)
-    .resize(450, 300)
-    .toFile(`public/uploads/${filenameSmall}`);
-  req.body.image = filename;
-  return next();
+  try {
+    const { file } = req;
+    if (file.size > 1000000)
+      return next(new AppError('Please upload an image less than 1mb'));
+    const filename = `post-${Date.now()}-${file.originalname}`;
+    const filenameSmall = `rs-post-${Date.now()}-${file.originalname}`;
+    await sharp(req.file.buffer)
+      .resize(900, 600)
+      .toFile(`public/uploads/${filename}`);
+    await sharp(req.file.buffer)
+      .resize(450, 300)
+      .toFile(`public/uploads/${filenameSmall}`);
+    req.body.image = filename;
+    return next();
+  } catch (err) {
+    return next(new AppError(err))
+  }
 });
 
 exports.uploadPostImage = upload.single('image');
