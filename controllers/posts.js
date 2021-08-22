@@ -1,4 +1,5 @@
 const multer = require('multer');
+const sharp = require('sharp');
 const Post = require('../models/post');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -22,25 +23,36 @@ exports.createPost = catchAsync(async (req, res, next) => {
   });
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads');
-  },
-  filename: async function (req, file, cb) {
-    if (file.mimetype.startsWith('image')) {
-      const filename = `post-${Date.now()}-${file.originalname}`;
-      const filenameSmall = `rs-post-${Date.now()}-${file.originalname}`;
-      cb(null, filename);
-      await sharp(req.file.buffer)
-        .resize(450, 300)
-        .toFile(`public/uploads/${filenameSmall}`);
-      req.body.image = filename;
-    } else {
-      cb(new AppError('Please upload image or document.', 400), false);
-    }
-  },
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
 });
 
-const upload = multer({ storage: storage });
+exports.resizePostImage = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+  const { file } = req;
+  if (file.size > 1000000)
+    return next(new AppError('Please upload an image less than 1mb'));
+  const filename = `post-${Date.now()}-${file.originalname}`;
+  const filenameSmall = `rs-post-${Date.now()}-${file.originalname}`;
+  await sharp(req.file.buffer)
+    .resize(900, 600)
+    .toFile(`public/uploads/${filename}`);
+  await sharp(req.file.buffer)
+    .resize(450, 300)
+    .toFile(`public/uploads/${filenameSmall}`);
+  req.body.image = filename;
+  return next();
+});
 
 exports.uploadPostImage = upload.single('image');
